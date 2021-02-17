@@ -18,7 +18,7 @@ public class UserServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        this.userRepo = (Repository) getServletContext().getAttribute("userRepo");
+        this.userRepo = (Repository) getServletContext().getAttribute("repo");
         if (userRepo == null) {
             throw new ServletException("Репозиторий не инициализирован");
         }
@@ -28,7 +28,7 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getPathInfo() == null || request.getPathInfo().equals("/user")) {
             request.setAttribute("users", userRepo.getAllUsers());
-            getServletContext().getRequestDispatcher("/WEB-INF/user.jsp").forward(request, response);
+            jspForward(request, response, "user.jsp");
         } else if (request.getPathInfo().equals("/edit")) {
             Long id;
             try {
@@ -43,16 +43,20 @@ public class UserServlet extends HttpServlet {
                 return;
             }
             request.setAttribute("user", user);
-            getServletContext().getRequestDispatcher("/WEB-INF/user_form.jsp").forward(request, response);
+            jspForward(request, response, "user_form.jsp");
         } else if (request.getPathInfo().equals("/delete")) {
             Long id = Long.parseLong(request.getParameter("id"));
             userRepo.deleteUser(id);
             response.sendRedirect(getServletContext().getContextPath() + "/user");
         } else if (request.getPathInfo().equals("/add")) {
-            getServletContext().getRequestDispatcher("/WEB-INF/user_form.jsp").forward(request, response);
+            jspForward(request, response, "user_form.jsp");
         }
 
+    }
 
+
+    public void jspForward(HttpServletRequest request, HttpServletResponse response, String jspName) throws ServletException, IOException {
+        getServletContext().getRequestDispatcher("/WEB-INF/"+jspName).forward(request, response);
     }
 
     @Override
