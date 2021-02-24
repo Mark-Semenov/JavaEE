@@ -1,0 +1,106 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <h:outputStylesheet library="primefaces-saga" name="theme.css" target="body"/>
+    <title>EShop application</title>
+
+</h:head>
+
+
+<h:body>
+
+    <div class="p-grid">
+        <div class="p-col p-col-align-end" id="cart">
+            <div class="box">
+                <ui:include src="cart.xhtml"/>
+            </div>
+        </div>
+
+
+        <div class="p-col p-col-align-center">
+            <div class="card product">
+                <h:form id="form">
+                    <p:dataView var="product" value="#{dataGridView.products}" rows="12" paginator="true"
+                                rowsPerPageTemplate="6,12,16"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                gridIcon="pi pi-th-large" listIcon="pi pi-bars">
+
+                        <p:dataViewGridItem>
+                            <div class="product-grid-item card border-1">
+                                <div class="product-grid-item-top">
+                                    <div>
+                                        <i class="pi pi-tag product-category-icon"/>
+                                        <span class="product-category">#{product.category}</span>
+                                    </div>
+                                    <span class="product-badge status-#{product.inventoryStatus.name().toLowerCase()}">#{product.inventoryStatus.text}</span>
+                                </div>
+                                <div class="product-grid-item-content">
+                                    <h:graphicImage value="images/#{product.image}"/>
+                                    <div class="product-name">#{product.name}</div>
+                                    <div class="product-description">#{product.description}</div>
+                                    <p:rating readonly="true" value="#{product.rating}"/>
+                                </div>
+                                <div class="product-grid-item-bottom">
+                                    <h:outputText value="#{product.price}" styleClass="product-price">
+                                        <f:convertNumber currencySymbol="$" type="currency"/>
+                                    </h:outputText>
+                                    <div class="product-grid-item-bottom">
+                                        <p:commandButton type="button"
+                                                         value="Add To Cart"
+                                                         icon="pi pi-shopping-cart"
+                                                         action="#{cartController.addProductToCart(product)}"
+                                                         disabled="#{product.inventoryStatus == 'OUTOFSTOCK'}">
+                                            <f:ajax event="click" render="cart"/>
+                                        </p:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:dataViewGridItem>
+
+                        <p:dataViewListItem>
+                            <div class="product-list-item">
+                                <h:graphicImage value="images/#{product.image}"/>
+                                <div class="product-list-detail">
+                                    <div class="product-name">#{product.name}</div>
+                                    <div class="product-description">#{product.description}</div>
+                                    <p:rating readonly="true" value="#{product.rating}"/>
+                                    <i class="pi pi-tag product-category-icon"/><span
+                                        class="product-category">#{product.category}</span>
+                                </div>
+                                <div class="product-list-action">
+                                    <h:outputText value="#{product.price}" styleClass="product-price">
+                                        <f:convertNumber currencySymbol="$" type="currency"/>
+                                    </h:outputText>
+                                    <div>
+                                        <p:commandButton type="button"
+                                                         value="Add To Cart"
+                                                         icon="pi pi-shopping-cart"
+                                                         action="#{cartController.addProductToCart(product)}"
+                                                         disabled="#{product.inventoryStatus == 'OUTOFSTOCK'}">
+                                            <f:ajax event="click" render="cart"/>
+                                        </p:commandButton>
+                                    </div>
+                                    <span class="product-badge status-#{product.inventoryStatus.name().toLowerCase()}">#{product.inventoryStatus.text}</span>
+                                </div>
+                            </div>
+                        </p:dataViewListItem>
+                    </p:dataView>
+                </h:form>
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</h:body>
+
+
+</html>
