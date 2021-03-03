@@ -1,39 +1,69 @@
 package ru.geekbrains.jsf_webb_app.cart;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
+@NamedQueries({
+        @NamedQuery(name = "Product.getAll", query = "from Product"),
+        @NamedQuery(name = "Product.deleteById", query = "DELETE FROM Product p WHERE p.id = :id"),
+        @NamedQuery(name = "Product.delete", query = "DELETE FROM Product p WHERE p = :p"),
+        @NamedQuery(name = "Product.getById", query = "from Product p where p.code = :id"),
+        @NamedQuery(name = "Product.count", query = "select count (*) from Product"),
+        @NamedQuery(name = "Product.getCategory", query = "from Product p inner join Category c where c.id = p.category.id"),
+
+
+})
+
+@Entity
+@DynamicInsert
+@DynamicUpdate
+@Table(name = "products")
 public class Product implements Serializable {
 
-    private static final long serialVersionUID = 1L;
 
-    private int id;
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @Column
     private String code;
-
+    @Column
     private String name;
-
+    @Column
     private String description;
-
+    @Column
     private String image;
-
+    @Column
     private double price;
 
-    private String category;
+    @ManyToOne
+    @JoinColumn
+    private Category category;
 
+    @Column
     private int quantity;
 
+    @Column
+    @Enumerated(EnumType.STRING)
     private InventoryStatus inventoryStatus;
-
+    @Column
     private int rating;
 
+
+    @Transient
     private AtomicInteger countInCart = new AtomicInteger(0);
 
+    @Transient
+    private static final long serialVersionUID = 1L;
 
     public Product() {
     }
 
-    public Product(int id, String code, String name, String description, String image, double price, String category, int quantity, InventoryStatus inventoryStatus, int rating) {
+    public Product(Long id, String code, String name, String description, String image, double price, Category category, int quantity, InventoryStatus inventoryStatus, int rating) {
         this.id = id;
         this.code = code;
         this.name = name;
@@ -46,9 +76,11 @@ public class Product implements Serializable {
         this.rating = rating;
     }
 
+
     public Product clone() {
         return new Product(getId(), getCode(), getName(), getDescription(), getImage(), getPrice(), getCategory(), getQuantity(), getInventoryStatus(), getRating());
     }
+
 
     public AtomicInteger getCountInCart() {
         return countInCart;
@@ -58,11 +90,11 @@ public class Product implements Serializable {
         this.countInCart = countInCart;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -106,13 +138,6 @@ public class Product implements Serializable {
         this.price = price;
     }
 
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
 
     public int getQuantity() {
         return quantity;
@@ -134,6 +159,14 @@ public class Product implements Serializable {
         return rating;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     public void setRating(int rating) {
         this.rating = rating;
     }
@@ -147,6 +180,7 @@ public class Product implements Serializable {
         return result;
     }
 
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -159,11 +193,6 @@ public class Product implements Serializable {
         if (code == null) {
             return other.code == null;
         } else return code.equals(other.code);
-    }
-
-
-    public double totalSum (){
-       return countInCart.get() * price;
     }
 
 }
