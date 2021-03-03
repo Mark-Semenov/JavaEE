@@ -4,9 +4,8 @@ package ru.geekbrains.jsf_webb_app.cart;
 import org.primefaces.PrimeFaces;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
@@ -19,12 +18,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Named
-@ApplicationScoped
+@SessionScoped
 public class CrudView implements Serializable {
 
     private List<Product> products;
 
     private Product selectedProduct;
+
+    private Product product;
 
     private List<Product> selectedProducts;
 
@@ -38,7 +39,6 @@ public class CrudView implements Serializable {
     private EntityManager entityManager;
 
 
-
     @PostConstruct
     public void init() {
         this.products = entityManager.createNamedQuery("Product.getAll", Product.class).getResultList();
@@ -47,6 +47,10 @@ public class CrudView implements Serializable {
         for (Category category : categories) {
             namesCategories.add(category.getName());
         }
+    }
+
+    public List<Product> getProductByCategory(int id) {
+        return new ArrayList<>(entityManager.createNamedQuery("Product.getCategory", Product.class).setParameter("category_id", id).getResultList());
     }
 
 
@@ -82,8 +86,8 @@ public class CrudView implements Serializable {
     @Transactional
     public void saveProduct() {
         if (this.selectedProduct.getCode() == null) {
-            newProduct();
             this.selectedProduct.setCode(UUID.randomUUID().toString().replaceAll("-", "").substring(0, 9));
+            newProduct();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Product Added"));
         } else {
             entityManager.merge(this.selectedProduct);
@@ -98,7 +102,7 @@ public class CrudView implements Serializable {
     @Transactional
     public void deleteProduct() {
 
-        entityManager.createNamedQuery("Product.delete").setParameter("p", this.selectedProduct);
+        entityManager.createNamedQuery("Product.delete").setParameter("p", this.selectedProduct).executeUpdate();
         this.selectedProduct = null;
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Product Removed"));
         PrimeFaces.current().ajax().update("form:messages", "form:dt-products");
@@ -119,7 +123,9 @@ public class CrudView implements Serializable {
 
     @Transactional
     public void deleteSelectedProducts() {
-        entityManager.createNamedQuery("Product.deleteById").setParameter("id", this.selectedProduct.getId());
+        for (Product product : selectedProducts) {
+            entityManager.createNamedQuery("Product.delete").setParameter("p", product).executeUpdate();
+        }
         this.selectedProducts = null;
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Products Removed"));
         PrimeFaces.current().ajax().update("form:messages", "form:dt-products");
@@ -140,7 +146,6 @@ public class CrudView implements Serializable {
     }
 
 
-
     public EntityManager getEntityManager() {
         return entityManager;
     }
@@ -155,5 +160,13 @@ public class CrudView implements Serializable {
 
     public void setNamesCategories(List<String> namesCategories) {
         this.namesCategories = namesCategories;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

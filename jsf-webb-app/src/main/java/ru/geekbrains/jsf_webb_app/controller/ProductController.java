@@ -52,5 +52,19 @@ public class ProductController implements Serializable {
         return "/product.xhtml?faces-redirect-true";
     }
 
+    public Repository getRepository() {
+        return repository;
+    }
 
+    public void setRepository(Repository repository) {
+        this.repository = repository;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
