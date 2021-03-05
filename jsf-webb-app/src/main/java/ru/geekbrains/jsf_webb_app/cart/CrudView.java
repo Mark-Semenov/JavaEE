@@ -4,6 +4,7 @@ package ru.geekbrains.jsf_webb_app.cart;
 import org.primefaces.PrimeFaces;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
@@ -13,7 +14,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +25,7 @@ public class CrudView implements Serializable {
 
     private Product selectedProduct;
 
-    private Product product;
+    private Category category;
 
     private List<Product> selectedProducts;
 
@@ -33,7 +33,6 @@ public class CrudView implements Serializable {
 
     private final Logger logger = LoggerFactory.getLogger(CrudView.class);
 
-    private List<String> namesCategories = new ArrayList<>();
 
     @PersistenceContext(unitName = "PostgresPU")
     private EntityManager entityManager;
@@ -41,18 +40,100 @@ public class CrudView implements Serializable {
 
     @PostConstruct
     public void init() {
-        this.products = entityManager.createNamedQuery("Product.getAll", Product.class).getResultList();
+        getProductsView();
         this.categories = entityManager.createNamedQuery("Category.getAll", Category.class).getResultList();
+    }
 
-        for (Category category : categories) {
-            namesCategories.add(category.getName());
+    public List<Product> getProductsView(){
+       return this.products = entityManager.createNamedQuery("Product.getAll", Product.class).getResultList();
+    }
+
+    public void openNew() {
+        this.selectedProduct = new Product();
+        selectedProduct.setCategory(new Category());
+    }
+
+    public void createProduct() {
+        entityManager.persist(this.selectedProduct);
+        getProductsView();
+    }
+
+    @Transactional
+    public void saveProduct() {
+        if (this.selectedProduct.getCode() == null) {
+            this.selectedProduct.setCode(UUID.randomUUID().toString().replaceAll("-", "").substring(0, 9));
+            createProduct();
+            getProductsView();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Product Added"));
+        } else {
+            entityManager.merge(this.selectedProduct);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Product Updated"));
         }
+
+        PrimeFaces.current().executeScript("PF('manageProductDialog').hide()");
+        PrimeFaces.current().ajax().update("form:messages", "dt-product");
     }
 
-    public List<Product> getProductByCategory(int id) {
-        return new ArrayList<>(entityManager.createNamedQuery("Product.getCategory", Product.class).setParameter("category_id", id).getResultList());
+
+    @Transactional
+    public void deleteProduct() {
+        entityManager.createNamedQuery("Product.delete").setParameter("p", this.selectedProduct).executeUpdate();
+        getProductsView();
+        this.selectedProduct = null;
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Product Removed"));
+        PrimeFaces.current().ajax().update("form:messages", "form:dt-product");
     }
 
+    public String getDeleteButtonMessage() {
+        if (hasSelectedProducts()) {
+            int size = this.selectedProducts.size();
+            return size > 1 ? size + " products selected" : "1 product selected";
+        }
+
+        return "Delete";
+    }
+
+    public boolean hasSelectedProducts() {
+        return this.selectedProducts != null && !this.selectedProducts.isEmpty();
+    }
+
+    @Transactional
+    public void deleteSelectedProducts() {
+        for (Product product : selectedProducts) {
+            entityManager.createNamedQuery("Product.delete").setParameter("p", product).executeUpdate();
+        }
+        getProductsView();
+        PrimeFaces.current().ajax().update("form:messages", "form:dt-products");
+        this.selectedProducts = null;
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Products Removed"));
+        PrimeFaces.current().executeScript("PF('dtProducts').clearFilters()");
+    }
+
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Logger getLogger() {
+        return logger;
+    }
 
     public List<Product> getProducts() {
         return products;
@@ -74,99 +155,4 @@ public class CrudView implements Serializable {
         this.selectedProducts = selectedProducts;
     }
 
-    public void openNew() {
-        this.selectedProduct = new Product();
-    }
-
-
-    public void newProduct() {
-        entityManager.persist(this.selectedProduct);
-    }
-
-    @Transactional
-    public void saveProduct() {
-        if (this.selectedProduct.getCode() == null) {
-            this.selectedProduct.setCode(UUID.randomUUID().toString().replaceAll("-", "").substring(0, 9));
-            newProduct();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Product Added"));
-        } else {
-            entityManager.merge(this.selectedProduct);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Product Updated"));
-        }
-
-        PrimeFaces.current().executeScript("PF('manageProductDialog').hide()");
-        PrimeFaces.current().ajax().update("form:messages", "form:dt-products");
-    }
-
-
-    @Transactional
-    public void deleteProduct() {
-
-        entityManager.createNamedQuery("Product.delete").setParameter("p", this.selectedProduct).executeUpdate();
-        this.selectedProduct = null;
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Product Removed"));
-        PrimeFaces.current().ajax().update("form:messages", "form:dt-products");
-    }
-
-    public String getDeleteButtonMessage() {
-        if (hasSelectedProducts()) {
-            int size = this.selectedProducts.size();
-            return size > 1 ? size + " products selected" : "1 product selected";
-        }
-
-        return "Delete";
-    }
-
-    public boolean hasSelectedProducts() {
-        return this.selectedProducts != null && !this.selectedProducts.isEmpty();
-    }
-
-    @Transactional
-    public void deleteSelectedProducts() {
-        for (Product product : selectedProducts) {
-            entityManager.createNamedQuery("Product.delete").setParameter("p", product).executeUpdate();
-        }
-        this.selectedProducts = null;
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Products Removed"));
-        PrimeFaces.current().ajax().update("form:messages", "form:dt-products");
-        PrimeFaces.current().executeScript("PF('dtProducts').clearFilters()");
-    }
-
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
-
-
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-
-    public List<String> getNamesCategories() {
-        return namesCategories;
-    }
-
-    public void setNamesCategories(List<String> namesCategories) {
-        this.namesCategories = namesCategories;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
 }

@@ -28,7 +28,6 @@
     <h:form id="form">
         <div class="card crud-demo">
             <p:growl id="messages" showDetail="true"/>
-
             <p:toolbar>
                 <p:toolbarGroup>
                     <!--                    New-->
@@ -44,6 +43,8 @@
                                      update="@this">
                         <p:confirm header="Confirmation" message="Delete the selected products?"
                                    icon="pi pi-exclamation-triangle"/>
+
+
                     </p:commandButton>
                 </p:toolbarGroup>
                 <!--                Upload-->
@@ -78,6 +79,7 @@
                 <p:ajax event="rowUnselectCheckbox" update=":form:delete-products-button"/>
                 <p:ajax event="toggleSelect" update=":form:delete-products-button"/>
 
+
                 <p:column selectionMode="multiple" exportable="false"/>
 
                 <p:column headerText="Code" sortBy="#{product.code}" filterBy="#{product.code}">
@@ -87,7 +89,7 @@
                     <h:outputText value="#{product.name}"/>
                 </p:column>
                 <p:column headerText="Image" exportable="false">
-                    <p:graphicImage name="images/#{product.image}" library="demo"
+                    <p:graphicImage name="images/#{product.image}" library="images"
                                     styleClass="product-image"/>
                 </p:column>
                 <p:column headerText="Price" sortBy="#{product.price}">
@@ -126,7 +128,7 @@
                       widgetVar="manageProductDialog" responsive="true">
                 <p:outputPanel id="manage-product-content" class="ui-fluid">
                     <p:outputPanel rendered="#{not empty crudView.selectedProduct}">
-                        <p:graphicImage name="images/#{crudView.selectedProduct.image}" library="demo"
+                        <p:graphicImage name="images/#{crudView.selectedProduct.image}" library="images"
                                         styleClass="product-image"
                                         rendered="#{not empty crudView.selectedProduct.image}"/>
                         <div class="p-field">
@@ -141,14 +143,13 @@
 
                             <p:outputLabel for="category">Category</p:outputLabel>
 
-                            <p:selectOneMenu id="category"
+                            <p:selectOneMenu id="category" value="#{crudView.selectedProduct.category.id}"
                                              layout="responsive">
-                                <f:selectItems value="#{crudView.categories}"
-                                               var="cat"
-                                               itemLabel="#{cat.name}"
-                                               itemValue="#{cat.id}"/>
-                            </p:selectOneMenu>
 
+                                <f:selectItems value="#{crudView.categories}" var="c"
+                                               itemLabel="#{c.name}"
+                                               itemValue="#{c.id}"/>
+                            </p:selectOneMenu>
 
                         </div>
                         <div class="p-formgrid p-grid">
@@ -168,8 +169,8 @@
 
                 <f:facet name="footer">
                     <p:commandButton value="Save" icon="pi pi-check" actionListener="#{crudView.saveProduct}"
-                                     update="manage-product-content" process="manage-product-content @this"/>
-
+                                     update="manage-product-content" process="manage-product-content @this">
+                    </p:commandButton>
                     <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageProductDialog').hide()"
                                      class="ui-button-secondary"/>
                 </f:facet>
@@ -178,7 +179,8 @@
             <p:confirmDialog widgetVar="deleteProductDialog" showEffect="fade" width="300"
                              message="Delete the product?" header="Confirm" severity="warn">
                 <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{crudView.deleteProduct}"
-                                 process="@this" oncomplete="PF('deleteProductDialog').hide()"/>
+                                 process="@this" oncomplete="PF('deleteProductDialog').hide()">
+                </p:commandButton>
 
                 <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
                                  onclick="PF('deleteProductDialog').hide()"/>

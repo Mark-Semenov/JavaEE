@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         @NamedQuery(name = "Product.getAll", query = "from Product"),
         @NamedQuery(name = "Product.deleteById", query = "DELETE FROM Product p WHERE p.id = :id"),
         @NamedQuery(name = "Product.delete", query = "DELETE FROM Product p WHERE p = :p"),
-        @NamedQuery(name = "Product.getById", query = "from Product p where p.code = :id"),
+        @NamedQuery(name = "Product.getById", query = "from Product p where p.id = :id"),
         @NamedQuery(name = "Product.count", query = "select count (*) from Product"),
         @NamedQuery(name = "Product.getCategory", query = "from Product p inner join Category c where c.id = :category_id"),
 
