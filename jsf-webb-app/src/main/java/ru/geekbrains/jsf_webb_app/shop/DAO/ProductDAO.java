@@ -26,12 +26,12 @@ public class ProductDAO {
     }
 
     public void deleteProduct(Product product) {
-        entityManager.remove(product);
+        entityManager.createNamedQuery("Product.delete").setParameter("p", product).executeUpdate();
     }
 
     public void deleteProducts(List<Product> productList) {
         for (Product product : productList) {
-            entityManager.remove(product);
+            entityManager.createNamedQuery("Product.delete").setParameter("p", product).executeUpdate();
         }
     }
 
