@@ -5,6 +5,7 @@ import ru.geekbrains.jsf_webb_app.shop.DAO.CategoryDAO;
 import ru.geekbrains.jsf_webb_app.shop.DAO.ProductDAO;
 import ru.geekbrains.jsf_webb_app.shop.entities.Category;
 import ru.geekbrains.jsf_webb_app.shop.entities.Product;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;

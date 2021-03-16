@@ -28,6 +28,14 @@ public class CategoryDAO implements Serializable {
         entityManager.remove(category);
     }
 
+    public Category categoryById(Long id){
+       return entityManager.find(Category.class, id);
+    }
+
+    public Category categoryByName(String name){
+       return entityManager.createNamedQuery("Category.getByName", Category.class).setParameter("name", name).getSingleResult();
+    }
+
     public void changeCategory(Category category){
         entityManager.merge(category);
     }

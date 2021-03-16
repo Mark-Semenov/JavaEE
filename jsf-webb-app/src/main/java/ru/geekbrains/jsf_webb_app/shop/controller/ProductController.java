@@ -21,6 +21,7 @@ public class ProductController implements Serializable {
 
     @EJB
     private ProductService productService;
+
     private Product selectedProduct;
     private List<Product> selectedProducts = new ArrayList<>();
 

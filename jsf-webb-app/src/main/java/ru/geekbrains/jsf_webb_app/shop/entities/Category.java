@@ -1,6 +1,7 @@
 package ru.geekbrains.jsf_webb_app.shop.entities;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -16,9 +17,14 @@ import java.util.List;
 public class Category implements Serializable {
 
     @Id
+    @GeneratedValue (strategy = GenerationType.AUTO)
     private Long Id;
     @Column
     private String name;
+
+    @Serial
+    @Transient
+    private static final long serialVersionUID = 1L;
 
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "category")
     private List<Product> products;
