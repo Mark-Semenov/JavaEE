@@ -4,6 +4,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,9 +15,9 @@ import java.util.concurrent.atomic.AtomicInteger;
         @NamedQuery(name = "Product.deleteById", query = "DELETE FROM Product p WHERE p.id = :id"),
         @NamedQuery(name = "Product.delete", query = "DELETE FROM Product p WHERE p = :p"),
         @NamedQuery(name = "Product.getById", query = "from Product p where p.id = :id"),
+        @NamedQuery(name = "Product.getByName", query = "from Product p where p.name = :name"),
         @NamedQuery(name = "Product.count", query = "select count (*) from Product"),
-        @NamedQuery(name = "Product.getCategory", query = "from Product p inner join Category c where c.id = :category_id")
-
+        @NamedQuery(name = "Product.getCategory", query = "select p from Product p inner join Category c on p.category.id = c.id where c.id = :category_id")
 
 })
 
@@ -58,6 +59,7 @@ public class Product implements Serializable {
     @Transient
     private AtomicInteger countInCart = new AtomicInteger(0);
 
+    @Serial
     @Transient
     private static final long serialVersionUID = 1L;
 
@@ -81,8 +83,23 @@ public class Product implements Serializable {
         this.category = category;
     }
 
-    public Product clone() {
-        return new Product(getId(), getCode(), getName(), getDescription(), getImage(), getPrice(), getCategory(), getQuantity(), getInventoryStatus(), getRating());
+    public Product(Long id, String code, String name, String description, BigDecimal price, Category category, int quantity) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.category = category;
+        this.quantity = quantity;
+    }
+
+    public Product(String code, String name, String description, BigDecimal price, Category category, int quantity) {
+        this.code = code;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.category = category;
+        this.quantity = quantity;
     }
 
 
