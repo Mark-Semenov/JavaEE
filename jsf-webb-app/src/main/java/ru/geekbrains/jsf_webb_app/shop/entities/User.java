@@ -1,12 +1,19 @@
-package ru.geekbrains.jsf_webb_app.persist;
+package ru.geekbrains.jsf_webb_app.shop.entities;
 
+import javax.persistence.*;
+
+@Entity
+@Table (name = "users")
 public class User {
 
+    @Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String surname;
     private int age;
     private String phone;
+
 
     public User() {
     }

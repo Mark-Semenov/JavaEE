@@ -1,4 +1,4 @@
-package ru.geekbrains.jsf_webb_app.cart;
+package ru.geekbrains.jsf_webb_app.shop.entities;
 
 public enum InventoryStatus {
     INSTOCK("In Stock"),

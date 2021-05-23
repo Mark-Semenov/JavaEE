@@ -1,10 +1,11 @@
-package ru.geekbrains.jsf_webb_app.cart;
+package ru.geekbrains.jsf_webb_app.shop.entities;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -14,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         @NamedQuery(name = "Product.delete", query = "DELETE FROM Product p WHERE p = :p"),
         @NamedQuery(name = "Product.getById", query = "from Product p where p.id = :id"),
         @NamedQuery(name = "Product.count", query = "select count (*) from Product"),
-        @NamedQuery(name = "Product.getCategory", query = "from Product p inner join Category c where c.id = :category_id"),
+        @NamedQuery(name = "Product.getCategory", query = "from Product p inner join Category c where c.id = :category_id")
 
 
 })
@@ -38,10 +39,11 @@ public class Product implements Serializable {
     @Column
     private String image;
     @Column
-    private double price;
+    private BigDecimal price;
 
     @ManyToOne
     private Category category;
+
 
     @Column
     private int quantity;
@@ -62,7 +64,7 @@ public class Product implements Serializable {
     public Product() {
     }
 
-    public Product(Long id, String code, String name, String description, String image, double price, Category category, int quantity, InventoryStatus inventoryStatus, int rating) {
+    public Product(Long id, String code, String name, String description, String image, BigDecimal price, Category category, int quantity, InventoryStatus inventoryStatus, int rating) {
         this.id = id;
         this.code = code;
         this.name = name;
@@ -75,6 +77,9 @@ public class Product implements Serializable {
         this.rating = rating;
     }
 
+    public Product(Category category) {
+        this.category = category;
+    }
 
     public Product clone() {
         return new Product(getId(), getCode(), getName(), getDescription(), getImage(), getPrice(), getCategory(), getQuantity(), getInventoryStatus(), getRating());
@@ -129,11 +134,11 @@ public class Product implements Serializable {
         this.image = image;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

@@ -36,11 +36,11 @@
             <div class="row py-2">
                 <div class="col-12">
                     <h:commandButton value="Add product" styleClass="btn btn-primary"
-                               action="#{productController.createProduct()}"/>
+                               action="#{productControllerOld.createProduct()}"/>
                 </div>
 
                 <div class="col-12">
-                    <h:dataTable value="#{productController.allProducts}" var="product"
+                    <h:dataTable value="#{productControllerOld.allProducts}" var="product"
                                  styleClass="table table-bordered my-2">
                         <h:column>
                             <f:facet name="header">Id</f:facet>
@@ -62,9 +62,9 @@
                             <f:facet name="header">Actions</f:facet>
 
                             <h:commandButton value="Edit" class="fas fa-edit" styleClass="btn btn-success"
-                                             action="#{productController.editProduct(product)}"/>
+                                             action="#{productControllerOld.editProduct(product)}"/>
                             <h:commandButton value="Delete" icon="far fa-trash-alt" styleClass="btn btn-danger"
-                                             action="#{productController.removeProduct(product)}">
+                                             action="#{productControllerOld.removeProduct(product)}">
                                 <f:ajax event="click" render="productForm"/>
                             </h:commandButton>
                         </h:column>
