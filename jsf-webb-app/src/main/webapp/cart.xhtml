@@ -14,6 +14,13 @@
 
 <h:body>
 
+
+    <div class="p-col p-col-align-end">
+        <div class="box">
+            <h:link outcome="catalog.xtml" value="Catalog"/>
+        </div>
+    </div>
+
     <div class="card">
         <h:form id="cart">
             <p:dataTable id="products" var="product" value="#{cartController.allProducts}">
@@ -39,7 +46,7 @@
                 </p:column>
 
                 <p:column headerText="Category">
-                    <h:outputText value="#{product.category}"/>
+                    <h:outputText value="#{product.category.name}"/>
                 </p:column>
 
                 <p:column headerText="Quantity">
@@ -60,10 +67,9 @@
                         <f:ajax event="click" render="cart"/>
                     </p:commandButton>
                 </p:column>
+
             </p:dataTable>
 
-            <div class="p-text-bold"><span>Total Sum</span></div>
-            <div class="p-text-normal">#{cartController.totalSum()}</div>
         </h:form>
     </div>
 

@@ -18,7 +18,10 @@
     <div class="p-grid">
         <div class="p-col p-col-align-end" id="cart">
             <div class="box">
-                <ui:include src="cart.xhtml"/>
+                <ul>
+                    <li><h:link outcome="cart.xtml" value="Go to cart"/></li>
+                    <li><h:link outcome="crudProduct.xhtm" value="Administration"/></li>
+                </ul>
             </div>
         </div>
 
@@ -26,7 +29,7 @@
         <div class="p-col p-col-align-center">
             <div class="card product">
                 <h:form id="form">
-                    <p:dataView var="product" value="#{dataGridView.products}" rows="12" paginator="true"
+                    <p:dataView var="product" value="#{crudView.products}" rows="12" paginator="true"
                                 rowsPerPageTemplate="6,12,16"
                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                 gridIcon="pi pi-th-large" listIcon="pi pi-bars">
@@ -34,16 +37,13 @@
                         <p:dataViewGridItem>
                             <div class="product-grid-item card border-1">
                                 <div class="product-grid-item-top">
-                                    <div>
-                                        <i class="pi pi-tag product-category-icon"/>
-                                        <span class="product-category">#{product.category}</span>
-                                    </div>
                                     <span class="product-badge status-#{product.inventoryStatus.name().toLowerCase()}">#{product.inventoryStatus.text}</span>
                                 </div>
                                 <div class="product-grid-item-content">
                                     <h:graphicImage value="images/#{product.image}"/>
                                     <div class="product-name">#{product.name}</div>
                                     <div class="product-description">#{product.description}</div>
+                                    <div class="product-category">#{product.category.name}</div>
                                     <p:rating readonly="true" value="#{product.rating}"/>
                                 </div>
                                 <div class="product-grid-item-bottom">
@@ -69,9 +69,9 @@
                                 <div class="product-list-detail">
                                     <div class="product-name">#{product.name}</div>
                                     <div class="product-description">#{product.description}</div>
+                                    <div class="product-category">#{product.category.name}</div>
                                     <p:rating readonly="true" value="#{product.rating}"/>
-                                    <i class="pi pi-tag product-category-icon"/><span
-                                        class="product-category">#{product.category}</span>
+                                    <i class="pi pi-tag product-category-icon"/>
                                 </div>
                                 <div class="product-list-action">
                                     <h:outputText value="#{product.price}" styleClass="product-price">
@@ -89,8 +89,12 @@
                                     <span class="product-badge status-#{product.inventoryStatus.name().toLowerCase()}">#{product.inventoryStatus.text}</span>
                                 </div>
                             </div>
+
+
                         </p:dataViewListItem>
                     </p:dataView>
+
+
                 </h:form>
             </div>
 
