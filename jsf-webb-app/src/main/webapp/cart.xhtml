@@ -1,0 +1,74 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+
+    <title>EShop application</title>
+
+</h:head>
+
+<h:body>
+
+    <div class="card">
+        <h:form id="cart">
+            <p:dataTable id="products" var="product" value="#{cartController.allProducts}">
+                <f:facet name="header">
+                    <div class="p-d-flex p-jc-between p-ai-center">
+
+                        <div>
+                            <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify"/>
+                            <p:columnToggler datasource="products" trigger="toggler"/>
+                        </div>
+                    </div>
+                </f:facet>
+                <p:column headerText="Id">
+                    <h:outputText value="#{product.id}"/>
+                </p:column>
+
+                <p:column headerText="Code">
+                    <h:outputText value="#{product.code}"/>
+                </p:column>
+
+                <p:column headerText="Name">
+                    <h:outputText value="#{product.name}"/>
+                </p:column>
+
+                <p:column headerText="Category">
+                    <h:outputText value="#{product.category}"/>
+                </p:column>
+
+                <p:column headerText="Quantity">
+                    <h:outputText value="#{product.countInCart}"/>
+                </p:column>
+
+                <p:column headerText="Price">
+                    <h:outputText value="#{product.price}">
+                        <f:convertNumber type="currency" currencySymbol="$"/>
+                    </h:outputText>
+
+                </p:column>
+
+                <p:column headerText="Delete">
+                    <p:commandButton type="button" icon="pi pi-times"
+                                     styleClass="rounded-button ui-button-danger ui-button-flat"
+                                     action="#{cartController.deleteProduct(product)}">
+                        <f:ajax event="click" render="cart"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+
+            <div class="p-text-bold"><span>Total Sum</span></div>
+            <div class="p-text-normal">#{cartController.totalSum()}</div>
+        </h:form>
+    </div>
+
+
+</h:body>
+
+
+</html>

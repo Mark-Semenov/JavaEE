@@ -1,7 +1,11 @@
 # Compiled class file
 *.class
 target/
+images/
+resources/
+test/
 .idea/
+out/
 *.iml
 
 # Log file
